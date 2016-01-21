@@ -70,7 +70,14 @@ Route::group(['prefix' => 'consumidor','middleware' => 'auth.checkrole:cliente',
 });
 
 Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api.'], function(){
-	Route::get('pedidos', function(){
-		return 'funciona';
+
+	Route::group(['prefix' => 'cliente', 'middleware' => 'oauth.checkrole:cliente', 'as' => 'cliente.'], function(){
+		Route::resource('order', 'Api\Cliente\ClienteCheckoutController', ['except' => ['create', 'edit', 'destroy']]);
+	});
+	
+	Route::group(['prefix' => 'deliveryman', 'middleware' => 'oauth.checkrole:deliveryman', 'as' => 'deliveryman.'], function(){
+		Route::get('pedidos', function(){
+			return 'Entregador';
+		});
 	});
 });

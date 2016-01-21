@@ -35,5 +35,13 @@ class UserTableSeeder extends Seeder
             'password' => bcrypt(123456),
             'remember_token' => str_random(10),
         ])->cliente()->save(factory(Cliente::class)->make());
+
+        factory(User::class)->create([
+            'name' => 'Deliveryman',
+            'email' => 'deliveryman@user.com',
+            'role' => 'deliveryman',
+            'password' => bcrypt(123456),
+            'remember_token' => str_random(10),
+        ])->cliente()->save(factory(Cliente::class)->make());
     }
 }
