@@ -71,13 +71,16 @@ Route::group(['prefix' => 'consumidor','middleware' => 'auth.checkrole:cliente',
 
 Route::group(['prefix' => 'api', 'middleware' => 'oauth', 'as' => 'api.'], function(){
 
+	Route::resource('authenticated', 'Api\Authenticated\AuthenticatedController', ['as' => 'authenticated.'], ['only' => ['index']]);
+
 	Route::group(['prefix' => 'cliente', 'middleware' => 'oauth.checkrole:cliente', 'as' => 'cliente.'], function(){
 		Route::resource('order', 'Api\Cliente\ClienteCheckoutController', ['except' => ['create', 'edit', 'destroy']]);
 	});
 	
 	Route::group(['prefix' => 'deliveryman', 'middleware' => 'oauth.checkrole:deliveryman', 'as' => 'deliveryman.'], function(){
-		Route::get('pedidos', function(){
-			return 'Entregador';
-		});
+		Route::resource('order', 'Api\Deliveryman\DeliverymanCheckoutController', ['only' => ['index', 'show']]);
+		Route::patch('order/{id}/update-status', [
+			'uses' => 'Api\Deliveryman\DeliverymanCheckoutController@updateStatus', 
+			'as' => 'order.update_status' ]);
 	});
 });

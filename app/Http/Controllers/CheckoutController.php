@@ -2,11 +2,11 @@
 
 namespace Delivery\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Delivery\Repositories\ProdutoRepository;
 use Delivery\Repositories\OrderRepository;
 use Delivery\Repositories\UserRepository;
 use Delivery\Services\OrderService;
+use Delivery\Http\Requests\CheckoutRequest;
 
 use Delivery\Http\Controllers\Controller;
 
@@ -43,7 +43,7 @@ class CheckoutController extends Controller
     	return view('consumidor.order.create', compact('produtos'));
     }
 
-    public function store(Request $request)
+    public function store(CheckoutRequest $request)
     {
         $data = $request->all();
         $cliente_id = $this->userRepository->find(\Auth::user()->id)->cliente->id;

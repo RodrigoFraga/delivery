@@ -4,7 +4,7 @@
 	<div class="container">
 		<h3>Novo Pedido</h3>
 
-		{{-- {{ Form::open(['route' => 'admin.cupoms.store']) }} --}}
+		@include('errors._check')
 
 		<div class="container">
 			{!! Form::open(['route' => 'consumidor.order.store' ,'class' => 'form']) !!}
@@ -31,7 +31,7 @@
 									</select>
 								</td>
 								<td>
-									{{ Form::text('items[0][qtd]', 1, ['class' => 'form-control']) }}
+									{!! Form::text('items[0][qtd]', 1, ['class' => 'form-control']) !!}
 								</td>
 							</tr>
 						</tbody>

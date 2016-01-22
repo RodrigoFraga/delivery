@@ -1,6 +1,6 @@
 <?php
 
-namespace Delivery\Http\Controllers\Api\Cliente;
+namespace Delivery\Http\Controllers\Api\Deliveryman;
 
 use Illuminate\Http\Request;
 use Delivery\Repositories\OrderRepository;
@@ -9,9 +9,8 @@ use Delivery\Services\OrderService;
 
 use LucaDegasperi\OAuth2Server\Facades\Authorizer;
 use Delivery\Http\Controllers\Controller;
-use Delivery\Http\Requests\CheckoutRequest;
 
-class ClienteCheckoutController extends Controller
+class DeliverymanCheckoutController extends Controller
 {
     private $orderRepository;
     private $userRepository;
@@ -30,37 +29,24 @@ class ClienteCheckoutController extends Controller
     {
         $id = Authorizer::getResourceOwnerId();
 
-        $cliente_id = $this->userRepository->find($id)->cliente->id;
-
         $orders = $this->orderRepository
                         ->skipPresenter(false)
-                        ->with($this->with)
-                        ->scopeQuery(function($query) use ($cliente_id){
-            return $query->where('cliente_id', '=', $cliente_id);
+                        ->with(['items'])->scopeQuery(function($query) use ($id){
+            return $query->where('user_deliveryman_id', '=', $id);
         })->paginate();
 
         return $orders;
-    }
-
-
-    public function store(CheckoutRequest $request)
-    {
-        $data = $request->all();
-        $id = Authorizer::getResourceOwnerId();
-
-        $cliente_id = $this->userRepository->find($id)->cliente->id;
-        $data['cliente_id'] = $cliente_id;
-        $o = $this->service->create($data);
-        return $this->orderRepository
-                    ->skipPresenter(false)
-                    ->with($this->with)->find($o->id);
     }
 
     public function show($id)
     {
         return $this->orderRepository
                     ->skipPresenter(false)
-                    ->with($this->with)
-                    ->find($id);
+                    ->getByIdAndDeliveryman($id, Authorizer::getResourceOwnerId());
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        return $this->service->updateStatus($id, Authorizer::getResourceOwnerId(), $request->get('status'));
     }
 }
